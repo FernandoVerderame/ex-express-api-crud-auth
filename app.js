@@ -17,6 +17,11 @@ const authRouter = require("./routers/auth.js");
 // Inizializzo express
 const app = express();
 
+// Importo Cors
+const cors = require("cors");
+
+app.use(cors());
+
 // Definisco le variabili port e host
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || "localhost";
