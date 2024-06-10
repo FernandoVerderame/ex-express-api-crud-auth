@@ -14,11 +14,11 @@ const register = async (req, res) => {
 
     try {
 
-        const { name, email, password } = req.body;
+        const { email, name, password } = req.body;
 
         const data = {
-            name,
             email,
+            name,
             password: await hashPassword(password)
         }
 
