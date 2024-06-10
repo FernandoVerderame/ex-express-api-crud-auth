@@ -4,6 +4,10 @@ const { PrismaClient } = require("@prisma/client");
 // Inizializzo Prisma
 const prisma = new PrismaClient();
 
+// Importo JWT
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
 // Importo la funzione per generare lo slug
 const createSlug = require("../utils/slug.js");
 
@@ -11,6 +15,12 @@ const createSlug = require("../utils/slug.js");
 const store = async (req, res) => {
 
     const { title, content, categoryId, tags } = req.body;
+
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userEmail = decoded.email;
+    const user = await prisma.user.findUnique({ where: { email: userEmail } });
+    const userId = user.id;
 
     // Genero lo slug
     const slug = createSlug(title);
@@ -22,6 +32,7 @@ const store = async (req, res) => {
         content,
         published: req.body.published ? true : false,
         categoryId: categoryId ? categoryId : '',
+        userId,
         tags: {
             connect: tags.map(id => ({ id }))
         }
@@ -35,6 +46,7 @@ const store = async (req, res) => {
     } catch (err) {
         // next(err);
         console.error(err);
+        res.status(500).send("Server Error");
     }
 }
 
@@ -78,6 +90,11 @@ const index = async (req, res) => {
                     select: {
                         name: true
                     }
+                },
+                user: {
+                    select: {
+                        name: true
+                    }
                 }
             },
             take: parseInt(limit),
@@ -109,6 +126,11 @@ const show = async (req, res) => {
                     }
                 },
                 tags: {
+                    select: {
+                        name: true
+                    }
+                },
+                user: {
                     select: {
                         name: true
                     }
