@@ -8,14 +8,18 @@ const router = express.Router();
 const validator = require("../middlewares/validator.js");
 
 // Importo le validazioni dell'users
-const { registerBody } = require("../validations/users.js");
+const { registerBody, loginBody } = require("../validations/users.js");
 
 const {
-    register
+    register,
+    login
 } = require("../controllers/auth.js");
 
 
 // Rotta registrazione
 router.post('/register', validator(registerBody), register);
+
+// Rotta login
+router.post('/login', validator(loginBody), login);
 
 module.exports = router;
