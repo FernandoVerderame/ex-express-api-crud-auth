@@ -7,6 +7,12 @@ const hashPassword = async (password) => {
     return hashPassword;
 }
 
+const comparePassword = async (password, hashPassword) => {
+    const isPasswordValid = await bcrypt.compare(password + process.env.PEPPER_KEY, hashPassword);
+    return isPasswordValid;
+}
+
 module.exports = {
-    hashPassword
+    hashPassword,
+    comparePassword
 }
