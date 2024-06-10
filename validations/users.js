@@ -1,6 +1,5 @@
 // Importo PrismaClient
 const { PrismaClient } = require("@prisma/client");
-const { options } = require("../routers/auth");
 
 // Inizializzo Prisma
 const prisma = new PrismaClient();
