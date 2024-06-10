@@ -9,6 +9,8 @@ const categoriesRouter = require("./routers/categories.js")
 
 const tagsRouter = require("./routers/tags.js");
 
+const authRouter = require("./routers/auth.js");
+
 // const errorHandler = require('./middlewares/errorHandler.js');
 // const notFound = require('./middlewares/notFound.js');
 
@@ -23,6 +25,9 @@ dotenv.config();
 
 // application/json
 app.use(express.json());
+
+// Rotte autenticazione
+app.use('/auth', authRouter);
 
 // Router dei Posts
 app.use('/posts', postsRouter);
