@@ -12,7 +12,8 @@ const registerBody = {
             bail: true
         },
         isEmail: {
-            errorMessage: "Email non valida!"
+            errorMessage: "Email non valida!",
+            bail: true
         },
         custom: {
             options: async (value) => {
