@@ -55,6 +55,30 @@ const registerBody = {
     }
 }
 
+const loginBody = {
+    email: {
+        in: ["body"],
+        notEmpty: {
+            errorMessage: "L'eamil è obbligatoria!",
+            bail: true
+        },
+        isEmail: {
+            errorMessage: "Email non valida!",
+        }
+    },
+    password: {
+        in: ["body"],
+        notEmpty: {
+            errorMessage: 'Password è un campo obbligatorio.',
+            bail: true
+        },
+        isString: {
+            errorMessage: 'Password deve essere una stringa.',
+        }
+    }
+}
+
 module.exports = {
-    registerBody
+    registerBody,
+    loginBody
 }
