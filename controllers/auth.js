@@ -5,7 +5,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 // Importo hashPassword
-const { hashPassword } = require("../utils/password.js");
+const { hashPassword, comparePassword } = require("../utils/password.js");
 
 // Importo generateToken
 const generateToken = require("../utils/generateToken.js");
@@ -40,6 +40,40 @@ const register = async (req, res) => {
 
 }
 
+const login = async (req, res) => {
+
+    try {
+
+        const { email, password } = req.body;
+
+        const user = await prisma.user.findFirst({
+            where: { email }
+        });
+
+        if (!user) {
+            throw new Error("Email o password errati!");
+        }
+
+        const isPasswordValid = await comparePassword(password, user.password);
+        if (!isPasswordValid) {
+            throw new Error("Email o password errati!");
+        }
+
+        const token = generateToken({
+            email: user.email,
+            name: user.name
+        });
+
+        delete user.id;
+        delete user.password;
+        res.json({ token, data: user });
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 module.exports = {
-    register
+    register,
+    login
 }
