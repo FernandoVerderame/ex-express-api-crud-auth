@@ -16,6 +16,8 @@ const bodyData = require("../validations/posts.js");
 // Importo la validazione del token
 const validationToken = require("../middlewares/auth.js");
 
+const verifyOwnership = require("../middlewares/authUser.js");
+
 // Importo le funzioni dei Posts
 const {
     store,
@@ -34,8 +36,8 @@ router.use('/:slug', validator(validationSlug));
 
 router.get('/:slug', show);
 
-router.put('/:slug', [validationToken, validator(bodyData)], update);
+router.put('/:slug', [validationToken, verifyOwnership, validator(bodyData)], update);
 
-router.delete('/:slug', [validationToken], destroy);
+router.delete('/:slug', [validationToken, verifyOwnership], destroy);
 
 module.exports = router;
