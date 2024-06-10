@@ -13,6 +13,9 @@ const validationSlug = require("../validations/validationSlug.js");
 // Importo il bodyData
 const bodyData = require("../validations/posts.js");
 
+// Importo la validazione del token
+const validationToken = require("../middlewares/auth.js");
+
 // Importo le funzioni dei Posts
 const {
     store,
@@ -22,7 +25,7 @@ const {
     destroy
 } = require("../controllers/posts.js");
 
-router.post('/', validator(bodyData), store);
+router.post('/', [validationToken, validator(bodyData)], store);
 
 router.get('/', index);
 
@@ -31,8 +34,8 @@ router.use('/:slug', validator(validationSlug));
 
 router.get('/:slug', show);
 
-router.put('/:slug', validator(bodyData), update);
+router.put('/:slug', [validationToken, validator(bodyData)], update);
 
-router.delete('/:slug', destroy);
+router.delete('/:slug', [validationToken], destroy);
 
 module.exports = router;

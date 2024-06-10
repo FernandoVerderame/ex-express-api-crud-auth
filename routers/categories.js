@@ -4,6 +4,9 @@ const express = require("express");
 // Istanza di express.Router()
 const router = express.Router();
 
+// Importo la validazione del token
+const validationToken = require("../middlewares/auth.js");
+
 // Importo le funzioni dei Posts
 const {
     store,
@@ -13,14 +16,14 @@ const {
     destroy
 } = require("../controllers/categories.js");
 
-router.post('/', store);
+router.post('/', [validationToken], store);
 
 router.get('/', index);
 
 router.get('/:id', show);
 
-router.put('/:id', update);
+router.put('/:id', [validationToken], update);
 
-router.delete('/:id', destroy);
+router.delete('/:id', [validationToken], destroy);
 
 module.exports = router;
