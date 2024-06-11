@@ -55,7 +55,7 @@ const store = async (req, res) => {
 const index = async (req, res) => {
     try {
         const where = {};
-        const { published, text, page = 1, limit = 5 } = req.query;
+        const { published, text, page = 1, limit = 9 } = req.query;
 
         // Filtro pubblicato
         if (published) where.published = published === 'true';
@@ -68,7 +68,7 @@ const index = async (req, res) => {
             ];
         }
 
-        // Paginazione
+        // // Paginazione
         const offset = (page - 1) * limit;
 
         const totalItems = await prisma.post.count({ where });
