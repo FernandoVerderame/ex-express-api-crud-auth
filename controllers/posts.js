@@ -14,13 +14,13 @@ const createSlug = require("../utils/slug.js");
 // Store dei Posts
 const store = async (req, res) => {
 
-    const { title, content, categoryId, tags } = req.body;
+    const { title, image, content, categoryId, tags } = req.body;
 
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userEmail = decoded.email;
-    const user = await prisma.user.findUnique({ where: { email: userEmail } });
-    const userId = user.id;
+    // const token = req.headers.authorization.split(" ")[1];
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // const userEmail = decoded.email;
+    // const user = await prisma.user.findUnique({ where: { email: userEmail } });
+    // const userId = user.id;
 
     // Genero lo slug
     const slug = createSlug(title);
@@ -28,14 +28,17 @@ const store = async (req, res) => {
     const data = {
         title,
         slug: slug,
-        image: req.body.image ? req.body.image : '',
+        image: image ? image : '',
         content,
         published: req.body.published ? true : false,
-        categoryId: categoryId ? categoryId : '',
-        userId,
+        // userId,
         tags: {
-            connect: tags.map(id => ({ id }))
+            connect: tags.map(id => ({ id: parseInt(id) }))
         }
+    }
+
+    if (categoryId) {
+        data.categoryId = parseInt(categoryId);
     }
 
     try {
@@ -55,7 +58,7 @@ const store = async (req, res) => {
 const index = async (req, res) => {
     try {
         const where = {};
-        const { published, text, page = 1, limit = 9 } = req.query;
+        const { published, text, page = 1, limit = 10 } = req.query;
 
         // Filtro pubblicato
         if (published) where.published = published === 'true';
@@ -80,19 +83,27 @@ const index = async (req, res) => {
 
         const posts = await prisma.post.findMany({
             where,
+            orderBy: [
+                {
+                    createdAt: 'desc'
+                }
+            ],
             include: {
                 category: {
                     select: {
+                        id: true,
                         name: true
                     }
                 },
                 tags: {
                     select: {
+                        id: true,
                         name: true
                     }
                 },
                 user: {
                     select: {
+                        id: true,
                         name: true
                     }
                 }
@@ -114,7 +125,6 @@ const index = async (req, res) => {
 
 // Show dei Posts
 const show = async (req, res) => {
-    console.log(req)
     try {
         const { slug } = req.params;
         const post = await prisma.post.findUnique({
@@ -122,16 +132,19 @@ const show = async (req, res) => {
             include: {
                 category: {
                     select: {
+                        id: true,
                         name: true
                     }
                 },
                 tags: {
                     select: {
+                        id: true,
                         name: true
                     }
                 },
                 user: {
                     select: {
+                        id: true,
                         name: true
                     }
                 }
@@ -150,7 +163,7 @@ const show = async (req, res) => {
 const update = async (req, res) => {
     try {
         const { slug } = req.params;
-        const { title, content, categoryId, tags } = req.body;
+        const { title, content, image, categoryId, tags } = req.body;
 
         // Genero lo slug
         const newSlug = createSlug(title);
@@ -158,13 +171,17 @@ const update = async (req, res) => {
         const data = {
             title,
             slug: newSlug,
-            image: req.body.image ? req.body.image : '',
+            image: image ? image : '',
             content,
             published: req.body.published ? true : false,
             categoryId: categoryId ? categoryId : '',
             tags: {
                 set: tags.map(id => ({ id }))
             }
+        }
+
+        if (categoryId) {
+            data.categoryId = categoryId;
         }
 
         const post = await prisma.post.update({
