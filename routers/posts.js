@@ -29,14 +29,16 @@ const {
     destroy
 } = require("../controllers/posts.js");
 
-router.post('/', validator(bodyData), store);
-
 router.get('/', index);
+
+router.use(validationToken);
 
 // Validatore dello slug
 router.use('/:slug', validator(validationSlug));
 
 router.get('/:slug', show);
+
+router.post('/', validator(bodyData), store);
 
 router.put('/:slug', validator(bodyData), update);
 
